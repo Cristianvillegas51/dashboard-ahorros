@@ -1,7 +1,8 @@
+import os
+import json
 import pandas as pd
 import streamlit as st
 import plotly.express as px
-import os
 
 # 1. Configuración de la página (Fondo y estilo corporativo)
 st.set_page_config(page_title="Dashboard de Ahorros HYC", layout="wide")
@@ -16,20 +17,20 @@ st.markdown("""
 
 st.title("📊 Resumen Ejecutivo de Resultados de Ahorros")
 
-# 2. RUTA LOCAL DE TU COMPUTADORA
-ruta_excel = r"C:\Users\CristianVillegasArri\OneDrive - GRUPO HYC, S.A. de C.V\Descargas\MiDashboard\08 Resultado de ahorros cris.xlsx"
+# 2. RUTA INTERNA PARA LA NUBE (Busca el Excel en tu mismo repositorio de GitHub)
+ruta_excel = "./08 Resultado de ahorros cris.xlsx"
 
 @st.cache_data
 def cargar_datos():
     if not os.path.exists(ruta_excel):
         raise FileNotFoundError(f"No se encontró el archivo de Excel en la ruta: {ruta_excel}")
     
-    # TRUCO MAESTRO: Leer automáticamente el archivo y detectar el nombre de la primera pestaña que tenga
+    # Detectar automáticamente el nombre de la primera pestaña que tenga el Excel
     archivo_excel = pd.ExcelFile(ruta_excel, engine="openpyxl")
-    primera_pestana = archivo_excel.sheet_names[0]  # Toma la primera hoja del Excel sin importar el nombre
+    primera_pestana = archivo_excel.sheet_names[0]
     
     df = pd.read_excel(ruta_excel, sheet_name=primera_pestana, engine="openpyxl")
-    df.columns = df.columns.str.strip()  # Limpiar espacios en los títulos de columnas
+    df.columns = df.columns.str.strip()  # Limpiar espacios vacíos en los títulos
     return df
 
 try:
@@ -51,7 +52,7 @@ try:
     if obra_seleccionada != "Todas":
         df_filtrado = df_filtrado[df_filtrado['OBRA'] == obra_seleccionada]
 
-    # 4. KPI AUTOMÁTICO (Tarjeta de ahorro)
+    # 4. KPI AUTOMÁTICO (Tarjeta de ahorro gigante)
     total_costo_venta = df_filtrado['AHORRO COSTO VENTA'].sum()
     st.metric(label="💰 Total Ahorro Costo Venta", value=f"${total_costo_venta:,.2f}")
 
