@@ -12,8 +12,8 @@ st.title("📊 System Command - Monitoreo de Ahorros e Importes Fuera de Catálo
 st.markdown("### Auditoría de Procesos, Eficiencia Comercial y Mitigación de Desviaciones")
 st.markdown("---")
 
-# 2. CONEXIÓN DE DATOS LOCALES BLINDADA
-ruta_excel = r"C:\Users\CristianVillegasArri\OneDrive - GRUPO HYC, S.A. de C.V\Descargas\MiDashboard\08 Resultado de ahorros cris.xlsx"
+# 2. CONEXIÓN DE DATOS ADAPTADA PARA LA NUBE (GitHub)
+ruta_excel = "./08 Resultado de ahorros cris.xlsx"
 
 if not os.path.exists(ruta_excel):
     st.error(f"Base de datos no localizada en la ruta configurada: {ruta_excel}")
@@ -164,7 +164,7 @@ with r3_c1:
     fig_lineas.add_trace(go.Scatter(x=df_mes_data[col_mes], y=df_mes_data[col_ahorro_cierre], name='Cierre', mode='lines+markers'))
     fig_lineas.update_layout(height=280, margin=dict(l=10, r=10, t=10, b=10), legend=dict(orientation="h", y=1.1))
     st.plotly_chart(fig_lineas, use_container_width=True)
-    st.info("📈 Analiza qué canales de negociación (Costo Venta o Proforma) están rindiendo más dinero.")
+    st.info("📈 Analiza qué canales de negociación (Costo Venta, Proforma o Cierre) están rindiendo más dinero.")
 
 with r3_c2:
     st.subheader("⚠️ Top 5 Proyectos Críticos con Mayor Desvío")
@@ -173,14 +173,3 @@ with r3_c2:
     fig_fugas.update_layout(height=280, margin=dict(l=10, r=10, t=10, b=10))
     st.plotly_chart(fig_fugas, use_container_width=True)
     st.info("🚨 Semáforo de alarma: detecta al instante qué frentes de trabajo necesitan auditoría interna inmediata.")
-
-st.markdown("---")
-
-# ==============================================================================
-# 6. PANEL INFERIOR: DIAGNÓSTICO ESTRATÉGICO FINANCIERO (LÍNEA POR LÍNEA SEGURO)
-# ==============================================================================
-st.subheader("🎯 Hallazgos Analíticos Globales y Acciones Corporativas de Inmediato")
-
-col_t1, col_t2 = st.columns(2)
-with col_t1:
-    st.markdown(f"• **Rentabilidad Protegida:** El volumen transaccionado de **${total_compra:,}** fue defendido con un ahorro neto de **${total_ahorro_consolidado:,}**.")
