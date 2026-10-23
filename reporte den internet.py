@@ -5,11 +5,31 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 
-# 1. ARQUITECTURA VISUAL (Fijar entorno ancho nativo)
+# 1. ARQUITECTURA VISUAL (Fijar entorno ancho nativo y paleta institucional)
 st.set_page_config(page_title="Tablero Control de Ahorros y Gestión", layout="wide")
 
-st.title("📊 System Command - Monitoreo de Ahorros e Importes Fuera de Catálogo")
-st.markdown("### Auditoría de Procesos, Eficiencia Comercial y Mitigación de Desviaciones")
+# Inyección de estilos con los colores corporativos oficiales de la organización
+st.markdown("""
+    <style>
+    .stApp { background-color: #53565A; color: #FFFFFF; }
+    h1, h2, h3, h4, h5, h6, p, label { color: #FFFFFF !important; }
+    .header-card { background-color: #0077BE; padding: 15px; border-radius: 6px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .header-title { color: #FFCD00; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+    .header-value { color: #FFFFFF; font-size: 24px; font-weight: 800; margin-top: 5px; }
+    div[data-testid="stSelectbox"] div[data-baseweb="select"] { background-color: #FFFFFF !important; color: #53565A !important; }
+    div[data-testid="stNotification"] { background-color: #0077BE !important; color: #FFFFFF !important; border-left: 5px solid #FFCD00 !important; }
+    </style>
+    """, unsafe_allow_html=True)
+
+# Encabezado corporativo con Logotipo Oficial
+col_logo, col_titulo = st.columns([1, 4])
+with col_logo:
+    # URL directa de la imagen oficial del logotipo para renderizado dinámico en la nube
+    st.image("https://grupohycsa.com", width=220)
+with col_titulo:
+    st.title("🦈 System Command - Monitoreo de Ahorros e Importes Fuera de Catálogo")
+    st.markdown("<p style='color:#FFCD00; font-size:16px; font-weight:600; margin-top:-10px;'>Auditoría de Procesos, Eficiencia Comercial y Mitigación de Desviaciones Financieras</p>", unsafe_allow_html=True)
+
 st.markdown("---")
 
 # 2. CONEXIÓN DE DATOS ADAPTADA PARA LA NUBE (GitHub)
@@ -64,7 +84,7 @@ for c in [col_obra, col_mes, col_resp]:
 f1, f2, f3 = st.columns(3)
 with f1:
     opciones_obra = ["Todas las Obras"] + sorted([x for x in df_raw[col_obra].unique() if x != 'nan'])
-    obra_sel = st.selectbox("🏗️ Frente de Trabajo:", opciones_obra)
+    obra_sel = st.selectbox("🏗️ Frente de Trabajo / Proyecto:", opciones_obra)
 with f2:
     opciones_mes = ["Todos los Meses"] + sorted([x for x in df_raw[col_mes].unique() if x != 'nan'])
     mes_sel = st.selectbox("📅 Ventana de Tiempo (Mes):", opciones_mes)
@@ -96,19 +116,19 @@ total_sin_estrategia = total_sin_est_cv + total_sin_est_prof
 eficiencia_gestion = float(((total_gestiones - total_sin_estrategia) / total_gestiones * 100))
 
 # ==============================================================================
-# 4. BLANCO DE INDICADORES MAESTROS (MÉTRICAS SIN DECIMALES)
+# 4. CONTROLES DE MEDICIÓN CORPORATIVOS (PALETA INSTITUCIONAL)
 # ==============================================================================
 kpi1, kpi2, kpi3, kpi4 = st.columns(4)
 with kpi1:
-    st.metric(label="💵 Importe Total Contratado", value=f"${total_compra:,}")
+    st.markdown(f'<div class="header-card"><div class="header-title">💵 Importe Total Contratado</div><div class="header-value">${total_compra:,}</div></div>', unsafe_allow_html=True)
 with kpi2:
-    st.metric(label="🛡️ Mitigación de Costo (Ahorros)", value=f"${total_ahorro_consolidado:,}")
+    st.markdown(f'<div class="header-card"><div class="header-title">🛡️ Mitigación de Costo (Ahorros)</div><div class="header-value" style="color:#FFCD00;">${total_ahorro_consolidado:,}</div></div>', unsafe_allow_html=True)
 with kpi3:
-    st.metric(label="🚨 Desvíos Operativos Fuera de MIX", value=f"${total_fuera_mix:,}")
+    st.markdown(f'<div class="header-card" style="background-color:#A94442;"><div class="header-title" style="color:#FFFFFF;">🚨 Desvíos Operativos Fuera de MIX</div><div class="header-value">${total_fuera_mix:,}</div></div>', unsafe_allow_html=True)
 with kpi4:
-    st.metric(label="📊 Efectividad Contable", value=f"{eficiencia_gestion:.1f}%")
+    st.markdown(f'<div class="header-card"><div class="header-title">📊 Efectividad Contable</div><div class="header-value" style="color:#FFCD00;">{eficiencia_gestion:.1f}%</div></div>', unsafe_allow_html=True)
 
-st.markdown("---")
+st.markdown("<br>", unsafe_allow_html=True)
 
 # ==============================================================================
 # 5. BLOQUE VISUAL REESTRUCTURADO EN PAREJAS DE ALTA DENSIDAD INFORMATIVA
@@ -119,8 +139,10 @@ r1_c1, r1_c2 = st.columns(2)
 with r1_c1:
     st.subheader("👤 Fuga Fuera de MIX por Comprador")
     df_resp_g = df_f.groupby(col_resp)[col_fuera_mix].sum().reset_index()
-    fig_resp = px.pie(df_resp_g, names=col_resp, values=col_fuera_mix, hole=0.4)
-    fig_resp.update_layout(height=280, margin=dict(l=10, r=10, t=10, b=10))
+    fig_resp = px.pie(df_resp_g, names=col_resp, values=col_fuera_mix, hole=0.4,
+                      color_discrete_sequence=['#0077BE', '#FFCD00', '#333333', '#CCCCCC'])
+    fig_resp.update_layout(height=280, margin=dict(l=10, r=10, t=10, b=10), paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+    fig_resp.update_traces(textfont_color='#FFFFFF')
     st.plotly_chart(fig_resp, use_container_width=True)
     st.info("🔍 Identifica qué compradores están rompiendo los acuerdos comerciales y autorizando importes fuera de catálogo.")
 
@@ -128,9 +150,9 @@ with r1_c2:
     st.subheader("🏗️ Eficiencia Comercial vs Volumen por Obra")
     df_obra_comp = df_f.groupby(col_obra).agg({col_importe_compra: 'sum', col_fuera_mix: 'sum'}).reset_index().sort_values(by=col_importe_compra, ascending=False).head(5)
     fig_comp_obra = go.Figure()
-    fig_comp_obra.add_trace(go.Bar(x=df_obra_comp[col_obra], y=df_obra_comp[col_importe_compra], name='Importe Compra'))
-    fig_comp_obra.add_trace(go.Bar(x=df_obra_comp[col_obra], y=df_obra_comp[col_fuera_mix], name='Fuga Fuera MIX'))
-    fig_comp_obra.update_layout(barmode='group', height=280, margin=dict(l=10, r=10, t=10, b=10))
+    fig_comp_obra.add_trace(go.Bar(x=df_obra_comp[col_obra], y=df_obra_comp[col_importe_compra], name='Importe Compra', marker_color='#0077BE'))
+    fig_comp_obra.add_trace(go.Bar(x=df_obra_comp[col_obra], y=df_obra_comp[col_fuera_mix], name='Fuga Fuera MIX', marker_color='#FFCD00'))
+    fig_comp_obra.update_layout(barmode='group', height=280, margin=dict(l=10, r=10, t=10, b=10), paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', legend=dict(font=dict(color="#FFFFFF")))
     st.plotly_chart(fig_comp_obra, use_container_width=True)
     st.info("📊 Cruce analítico directo: compara la inyección de presupuesto contra la disciplina operativa por proyecto.")
 
@@ -140,36 +162,12 @@ with r2_c1:
     st.subheader("🎯 Efectividad de la Operación Contable")
     labels_gestion = ['Estrategia Correcta', 'Incidencia Ineficiente']
     valores_gestion = [max(0, total_gestiones - total_sin_estrategia), total_sin_estrategia]
-    fig_gestion = px.pie(names=labels_gestion, values=valores_gestion, hole=0.5)
-    fig_gestion.update_layout(height=280, margin=dict(l=10, r=10, t=10, b=10))
+    fig_gestion = px.pie(names=labels_gestion, values=valores_gestion, hole=0.5,
+                         color_discrete_sequence=['#0077BE', '#A94442'])
+    fig_gestion.update_layout(height=280, margin=dict(l=10, r=10, t=10, b=10), paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+    fig_gestion.update_traces(textfont_color='#FFFFFF')
     st.plotly_chart(fig_gestion, use_container_width=True)
     st.info("💡 Mide el porcentaje de procesos que cumplieron con la validación de tarifas institucionales.")
 
 with r2_c2:
     st.subheader("📅 Velocidad Histórica de Fugas de Capital")
-    df_fuga_mes = df_f.groupby(col_mes)[col_fuera_mix].sum().reset_index()
-    fig_fuga_mes = px.bar(df_fuga_mes, x=col_mes, y=col_fuera_mix)
-    fig_fuga_mes.update_layout(height=280, margin=dict(l=10, r=10, t=10, b=10))
-    st.plotly_chart(fig_fuga_mes, use_container_width=True)
-    st.info("📅 Rastrea de forma temporal en qué periodos mensuales se disparó la indisciplina presupuestal.")
-
-# --- FILA GRÁFICA 3 ---
-r3_c1, r3_c2 = st.columns(2)
-with r3_c1:
-    st.subheader("📉 Captura y Rendimiento de Ahorros")
-    df_mes_data = df_f.groupby(col_mes)[[col_ahorro_cv, col_ahorro_prof, col_ahorro_cierre]].sum().reset_index()
-    fig_lineas = go.Figure()
-    fig_lineas.add_trace(go.Scatter(x=df_mes_data[col_mes], y=df_mes_data[col_ahorro_cv], name='Costo Venta', mode='lines+markers'))
-    fig_lineas.add_trace(go.Scatter(x=df_mes_data[col_mes], y=df_mes_data[col_ahorro_prof], name='Proforma', mode='lines+markers'))
-    fig_lineas.add_trace(go.Scatter(x=df_mes_data[col_mes], y=df_mes_data[col_ahorro_cierre], name='Cierre', mode='lines+markers'))
-    fig_lineas.update_layout(height=280, margin=dict(l=10, r=10, t=10, b=10), legend=dict(orientation="h", y=1.1))
-    st.plotly_chart(fig_lineas, use_container_width=True)
-    st.info("📈 Analiza qué canales de negociación (Costo Venta, Proforma o Cierre) están rindiendo más dinero.")
-
-with r3_c2:
-    st.subheader("⚠️ Top 5 Proyectos Críticos con Mayor Desvío")
-    df_fugas = df_f.groupby(col_obra)[col_fuera_mix].sum().reset_index().sort_values(by=col_fuera_mix, ascending=True).tail(5)
-    fig_fugas = px.bar(df_fugas, y=col_obra, x=col_fuera_mix, orientation='h')
-    fig_fugas.update_layout(height=280, margin=dict(l=10, r=10, t=10, b=10))
-    st.plotly_chart(fig_fugas, use_container_width=True)
-    st.info("🚨 Semáforo de alarma: detecta al instante qué frentes de trabajo necesitan auditoría interna inmediata.")
